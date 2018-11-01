@@ -88,6 +88,7 @@ void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 	}
 	else
 	{
+		/*Slave mode*/
 		I2C0->C1 &= ~(I2C_C1_MST_MASK);
 	}
 }
