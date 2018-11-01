@@ -37,7 +37,7 @@ void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 		 * */
 		I2C0->F = I2C_F_MULT(2);
 		/*Enable I2C module*/
-		I2C0->C1 = I2C_C1_IICIE_MASK;
+		I2C0->C1 = I2C_C1_IICEN_MASK;
 		break;
 	case I2C_1:
 		SIM->SCGC4 |= SIM_SCGC4_I2C1_MASK;
@@ -51,7 +51,7 @@ void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 		 * */
 		I2C1->F = I2C_F_MULT(2);
 		/*Enable I2C module*/
-		I2C1->C1 = I2C_C1_IICIE_MASK;
+		I2C1->C1 = I2C_C1_IICEN_MASK;
 		break;
 	case I2C_2:
 		SIM->SCGC1 |= SIM_SCGC1_I2C2_MASK;
@@ -65,7 +65,7 @@ void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 		 * */
 		I2C2->F = I2C_F_MULT(2);
 		/*Enable I2C module*/
-		I2C2->C1 = I2C_C1_IICIE_MASK;
+		I2C2->C1 = I2C_C1_IICEN_MASK;
 		break;
 	default:
 		break;
@@ -97,7 +97,18 @@ void I2C_tx_rx_mode(uint8_t tx_or_rx)
 	if(TRUE == tx_or_rx)
 	{
 		/*Receive mode*/
+		/*Transmit Mode
+		 *Selects the direction of master and slave transfers.
+		 *0 Receive
+		 *1 Transmit
+		 */
 		I2C0->C1 &= ~(I2C_C1_TX_MASK);
+		/*Transmit Acknowledge
+		 *Specifies the value driven onto the SDA during data acknowledge cycles for both master and slave
+		 *0 An acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the
+current receiving byte (if FACK is set).
+		 *1 No acknowledge signal is sent to the bus on the following receiving data byte (if FACK is cleared) or
+the current receiving data byte (if FACK is set).*/
 		I2C0->C1 &= ~(I2C_C1_TXAK_MASK);
 	}
 	else
@@ -105,4 +116,14 @@ void I2C_tx_rx_mode(uint8_t tx_or_rx)
 		/*Transmit mode*/
 		I2C0->C1 |= I2C_C1_TX_MASK;
 	}
+}
+void I2C_nack(void)
+{
+	I2C0->C1 |= I2C_C1_TXAK_MASK;
+}
+void I2C_repeted_start(void)
+{
+	/*Repeat START
+	 *Writing 1 to this bit generates a repeated START condition provided it is the current master.*/
+	I2C0->C1 |= I2C_C1_RSTA_MASK;
 }
