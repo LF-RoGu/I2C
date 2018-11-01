@@ -157,4 +157,8 @@ void I2C_wait(void)
 	/*Waits until the process TCF(Transfer Complete Flag) changes*/
 	while(FALSE == (I2C0->S && I2C_S_IICIF_MASK));
 }
-uint8_t I2C_get_ack(void);
+uint8_t I2C_get_ack(void)
+{
+	/*It returns if there is Acknowledge or not*/
+	return I2C0->S & I2C_S_RXAK_MASK;
+}
