@@ -119,6 +119,7 @@ the current receiving data byte (if FACK is set).*/
 }
 void I2C_nack(void)
 {
+	/*Mask for not acknowledge*/
 	I2C0->C1 |= I2C_C1_TXAK_MASK;
 }
 void I2C_repeted_start(void)
@@ -133,7 +134,12 @@ void I2C_write_byte(uint8_t data)
 	 * In master transmit mode, when data is written to this register, a data transfer is initiated.*/
 	I2C0->D = data;
 }
-uint8_t  I2C_read_byte(void);
+uint8_t  I2C_read_byte(void)
+{
+	/*The value in the register ->D is send to a variable*/
+	uint32 readByte = I2C0->D;
+	return (readByte);
+}
 void I2C_start(void)
 {
 	/*Generate the Start Signal*/
@@ -146,7 +152,6 @@ void I2C_stop(void)
 	I2C0->C1 &= ~I2C_C1_TX_MASK;
 	I2C0->C1 &= ~I2C_C1_MST_MASK;
 }
-uint8_t  I2C_read_byte(void);
 void I2C_wait(void)
 {
 	/*Waits until the process TCF(Transfer Complete Flag) changes*/
