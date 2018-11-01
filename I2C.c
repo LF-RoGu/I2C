@@ -127,3 +127,21 @@ void I2C_repeted_start(void)
 	 *Writing 1 to this bit generates a repeated START condition provided it is the current master.*/
 	I2C0->C1 |= I2C_C1_RSTA_MASK;
 }
+void I2C_write_byte(uint8_t data)
+{
+	/*Data I/O register
+	 * In master transmit mode, when data is written to this register, a data transfer is initiated.*/
+	I2C0->D = data;
+}
+void I2C_start(void)
+{
+	/*Generate the Start Signal*/
+	I2C0->C1 |= I2C_C1_TX_MASK;
+	I2C0->C1 |= I2C_C1_MST_MASK;
+}
+void I2C_stop(void)
+{
+	/*Generates the Stop Signal*/
+	I2C0->C1 &= ~I2C_C1_TX_MASK;
+	I2C0->C1 &= ~I2C_C1_MST_MASK;
+}
