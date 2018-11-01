@@ -10,6 +10,16 @@
 /*PCR config*/
 static const GPIO_pinControlRegisterType I2C_PCR = GPIO_MUX2|GPIO_PS;
 
+void I2C0_IRQHandler()
+{
+	/*Interrupt Flag
+	 * This bit sets when an interrupt is pending
+	 * 0 No interrupt pending
+	 * 1 Interrupt pending
+	 * */
+	I2C0->S |= I2C_S_IICIF_MASK;
+}
+
 void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 {
 	uint32 valueSCL;

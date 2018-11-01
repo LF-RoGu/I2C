@@ -18,6 +18,8 @@
 #define FREQUENCY_DIVIDER 0x40
 /** Constant that represent the clock enable for GPIO A */
 #define I2C0_CLOCK_GATING 0x40
+/**/
+#define MULT 4
 /**
  * \brief This enum define the I2C channel to be used.
  */

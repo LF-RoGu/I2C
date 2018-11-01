@@ -38,7 +38,22 @@ int main(void)
 	/**Enables the UART 0 interrupt in the NVIC*/
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_10);
 
-	menu();
+	/**The following sentences send strings to PC using the UART_putString function. Also, the string
+	 * is coded with terminal code*/
+	/** VT100 command for text in red and background in cyan*/
+	UART_putString(UART_0, "\033[0;32;46m");
+	/*VT100 command for clearing the screen*/
+	UART_putString(UART_0, "\033[2J");
+	/** VT100 command for text in red and background in green*/
+	UART_putString(UART_0, "\033[0;32;41m");
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[10;10H");
+	UART_putString(UART_0, "1)Leer Hora\r");
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[11;10H");
+	UART_putString(UART_0, "2)Configurar Hora\r");
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[12;10H");
 
 	/**Enables interrupts*/
 	EnableInterrupts;

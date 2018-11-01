@@ -8,7 +8,7 @@
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include "DataTypeDefinitions.h"
+#include "Bits.h"
 
 
 /** Constant that represent the clock enable for GPIO A */
