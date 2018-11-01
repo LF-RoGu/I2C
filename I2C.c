@@ -75,9 +75,9 @@ uint8_t I2C_busy()
 {
 	/*Verify that the module is not busy so it can continue*/
 	if(I2C0->S && I2C_S_BUSY_MASK)
-		return TRUE;
+		return TRUE;  /*If this case, then the I2C is available*/
 	else
-		return FALSE;
+		return FALSE; /*If this case, then the I2C is busy*/
 }
 void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 {
@@ -133,6 +133,7 @@ void I2C_write_byte(uint8_t data)
 	 * In master transmit mode, when data is written to this register, a data transfer is initiated.*/
 	I2C0->D = data;
 }
+uint8_t  I2C_read_byte(void);
 void I2C_start(void)
 {
 	/*Generate the Start Signal*/
@@ -145,3 +146,10 @@ void I2C_stop(void)
 	I2C0->C1 &= ~I2C_C1_TX_MASK;
 	I2C0->C1 &= ~I2C_C1_MST_MASK;
 }
+uint8_t  I2C_read_byte(void);
+void I2C_wait(void)
+{
+	/*Waits until the process TCF(Transfer Complete Flag) changes*/
+	while(FALSE == (I2C0->S && I2C_S_IICIF_MASK));
+}
+uint8_t I2C_get_ack(void);
