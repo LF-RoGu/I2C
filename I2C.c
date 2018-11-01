@@ -92,3 +92,17 @@ void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 		I2C0->C1 &= ~(I2C_C1_MST_MASK);
 	}
 }
+void I2C_tx_rx_mode(uint8_t tx_or_rx)
+{
+	if(TRUE == tx_or_rx)
+	{
+		/*Receive mode*/
+		I2C0->C1 &= ~(I2C_C1_TX_MASK);
+		I2C0->C1 &= ~(I2C_C1_TXAK_MASK);
+	}
+	else
+	{
+		/*Transmit mode*/
+		I2C0->C1 |= I2C_C1_TX_MASK;
+	}
+}
