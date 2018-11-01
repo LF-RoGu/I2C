@@ -12,6 +12,7 @@
 #include "GPIO.h"
 #include "I2C.h"
 
-void RTC_sec(uint8 data);
+void RTC_set_sec(uint8 data);
+uint8 RTC_get_sec(void);
 
 #endif /* RTC_H_ */
