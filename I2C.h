@@ -24,6 +24,12 @@
  * \brief This enum define the I2C channel to be used.
  */
 typedef enum {I2C_0, I2C_1, I2C_2} i2c_channel_t;
+/*
+ * */
+typedef enum{I2C_SLV = FALSE,I2C_MST = TRUE}i2c_mst_t;
+/*
+ * \brief This enum define if the I2C is going to be Rx or Tx*/
+typedef enum{I2C_RX = FALSE,I2C_TX = TRUE}i2c_mode_t;
 
 /********************************************************************************************/
  /********************************************************************************************/

@@ -13,6 +13,7 @@
 
 #include "Bits.h"
 #include "NVIC.h"
+#include "GPIO.h"
 #include "MK64F12.h" /* include peripheral declarations */
 
 /**

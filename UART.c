@@ -14,6 +14,9 @@ UART_MailBoxType UART3_MailBox;
 UART_MailBoxType UART4_MailBox;
 UART_MailBoxType UART5_MailBox;
 
+/*UART PCR*/
+static const GPIO_pinControlRegisterType UART_PCR = GPIO_MUX3;
+
 void UART0_RX_TX_IRQHandler(void)
 {
 	/*First is verified if the serial port finished to transmit*/
@@ -28,6 +31,17 @@ void UART_init(UART_ChannelType uartChannel, uint32 systemClk, UART_BaudRateType
 {
 	uint16 brfa;
 	uint8 temp;
+
+	/**This is mail box to received the information from the serial port*/
+	UART_MailBoxType UART0_MailBox;
+
+	/*Set the configuration for UART_PCR_Tx in pin16/PortB*/
+	GPIO_pin_control_register(GPIO_B, BIT16, &UART_PCR);
+	GPIO_data_direction_pin(GPIO_B, GPIO_OUTPUT, BIT16);
+	/*Set the configuration for UART_PCR_Rx in pin17/PortB*/
+	GPIO_pin_control_register(GPIO_B, BIT17, &UART_PCR);
+	GPIO_data_direction_pin(GPIO_B, GPIO_INPUT, BIT17);
+
 	switch(uartChannel)
 	{
 	case UART_0:

@@ -7,9 +7,6 @@
 
 #include "I2C.h"
 
-/*PCR config*/
-static const GPIO_pinControlRegisterType I2C_PCR = GPIO_MUX2|GPIO_PS;
-
 void I2C0_IRQHandler()
 {
 	/*Interrupt Flag
@@ -22,13 +19,19 @@ void I2C0_IRQHandler()
 
 void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 {
-	uint32 valueSCL;
+	/*PCR config*/
+	static const GPIO_pinControlRegisterType I2C_PCR = GPIO_MUX2|GPIO_PS;
+
+	SIM->SCGC5 = SIM_SCGC5_PORTB_MASK;
+
 	/*Set the configuration for I2C_PCR_Tx*/
-	GPIO_pin_control_register(GPIO_B,BIT2,&I2C_PCR);
+	GPIO_pin_control_register(GPIO_B, BIT2, &I2C_PCR);
 	GPIO_data_direction_pin(GPIO_B,GPIO_OUTPUT,BIT2);
 	/*Set the configuration for I2C_PCR_Rx*/
-	GPIO_pin_control_register(GPIO_B,BIT3,&I2C_PCR);
+	GPIO_pin_control_register(GPIO_B, BIT3, &I2C_PCR);
 	GPIO_data_direction_pin(GPIO_B,GPIO_INPUT,BIT3);
+
+	uint32 valueSCL;
 
 	/*I2C baud rate = I2C module clock speed (Hz)/(mul × SCL divider)*/
 	valueSCL = system_clock/(baud_rate*MULT);
@@ -60,7 +63,7 @@ void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 		 * 11 Reserved
 		 * */
 		I2C1->F = I2C_F_MULT(2);
-		/*Enable I2C module*/
+		/*Enable I2C mo0dule*/
 		I2C1->C1 = I2C_C1_IICEN_MASK;
 		break;
 	case I2C_2:
@@ -83,11 +86,14 @@ void I2C_init(i2c_channel_t channel, uint32_t system_clock, uint16_t baud_rate)
 }
 uint8_t I2C_busy()
 {
-	/*Verify that the module is not busy so it can continue*/
-	if(I2C0->S && I2C_S_BUSY_MASK)
-		return TRUE;  /*If this case, then the I2C is available*/
-	else
-		return FALSE; /*If this case, then the I2C is busy*/
+	/*In this case, the I2C is free*/
+	if (FALSE == (I2C0->S & I2C_S_BUSY_MASK)) {
+		return TRUE; //I2C is idle
+	}
+	/*In this case the I2C is busy*/
+	else {
+		return FALSE; //I2C is busy
+	}
 }
 void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 {
@@ -104,22 +110,11 @@ void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 }
 void I2C_tx_rx_mode(uint8_t tx_or_rx)
 {
-	if(TRUE == tx_or_rx)
+	if(FALSE == tx_or_rx)
 	{
-		/*Receive mode*/
-		/*Transmit Mode
-		 *Selects the direction of master and slave transfers.
-		 *0 Receive
-		 *1 Transmit
-		 */
-		I2C0->C1 &= ~(I2C_C1_TX_MASK);
-		/*Transmit Acknowledge
-		 *Specifies the value driven onto the SDA during data acknowledge cycles for both master and slave
-		 *0 An acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the
-current receiving byte (if FACK is set).
-		 *1 No acknowledge signal is sent to the bus on the following receiving data byte (if FACK is cleared) or
-the current receiving data byte (if FACK is set).*/
-		I2C0->C1 &= ~(I2C_C1_TXAK_MASK);
+		/*Recieve mode*/
+		I2C0->C1 &= ~I2C_C1_TX_MASK;
+		I2C0->C1 &= ~I2C_C1_TXAK_MASK;
 	}
 	else
 	{
@@ -144,11 +139,10 @@ void I2C_write_byte(uint8_t data)
 	 * In master transmit mode, when data is written to this register, a data transfer is initiated.*/
 	I2C0->D = data;
 }
-uint8_t  I2C_read_byte(void)
+uint8_t I2C_read_byte(void)
 {
 	/*The value in the register ->D is send to a variable*/
-	uint32 readByte = I2C0->D;
-	return (readByte);
+	return (I2C0->D);
 }
 void I2C_start(void)
 {
@@ -166,9 +160,10 @@ void I2C_wait(void)
 {
 	/*Waits until the process TCF(Transfer Complete Flag) changes*/
 	while(FALSE == (I2C0->S && I2C_S_IICIF_MASK));
+	I2C0->S |= I2C_S_IICIF_MASK;
 }
 uint8_t I2C_get_ack(void)
 {
 	/*It returns if there is Acknowledge or not*/
-	return I2C0->S & I2C_S_RXAK_MASK;
+	while(FALSE != (I2C0->S & I2C_S_RXAK_MASK));
 }
