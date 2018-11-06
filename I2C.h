@@ -2,7 +2,7 @@
  * I2C.h
  *
  *  Created on: Oct 29, 2018
- *      Author: LuisFernando
+ *      Author: jlpe
  */
 
 #ifndef I2C_H_

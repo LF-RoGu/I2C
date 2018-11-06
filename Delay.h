@@ -12,4 +12,8 @@
 
 void delay(uint16_t delay);
 
+void sleep(void);
+
+void sleep_sec(void);
+
 #endif /* DELAY_H_ */

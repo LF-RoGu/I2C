@@ -7,20 +7,18 @@
 
 #include "UART_DECO.h"
 
-static uint8 flagKey = FALSE;
-static uint8 flagEnter = FALSE;
-
 static uint8 temp0,	/*Unidad*/
 			 temp1,	/*Decena*/
 			 temp2,	/*Centena*/
-			 temp3;	/*Millar*/
+			 temp3,	/*Millar*/
+			 temp4; /*Decena Millar*/
 
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
 /*SECTION TO DECO THE VALUE OBTAINED FROM THE MEMORY*/
 
-uint8 valueCapture(uint32 value)
+void valueCapture(uint32 value)
 {
 	uint8 tempValue1 = value / DECENA_MILLAR;
 	uint8 tempValue2 = value / MILLAR;
@@ -55,4 +53,25 @@ uint8 valueCapture(uint32 value)
 		temp0 = value - (DECENA * temp4);
 	else
 		temp0 = 0;
+}
+
+uint8 get_unidad()
+{
+	return (temp0 + ASCII_CONV);
+}
+uint8 get_decena()
+{
+	return (temp4 + ASCII_CONV);
+}
+uint8 get_centena()
+{
+	return (temp3 + ASCII_CONV);
+}
+uint8 get_millar()
+{
+	return (temp2 + ASCII_CONV);
+}
+uint8 get_decenaMillar()
+{
+	return (temp1 + ASCII_CONV);
 }

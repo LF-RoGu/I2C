@@ -10,6 +10,8 @@
 
 #include "Bits.h"
 #include "UART.h"
+#include "UART_DECO.h"
+#include "RTC.h"
 
 typedef enum
 {
