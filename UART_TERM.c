@@ -45,7 +45,22 @@ void show_menu()
 /********************************************************************************************************/
 /********************************************************************************************************/
 /********************************************************************************************************/
-void get_hour(void)
+void show_set_hour()
+{
+	/*Funct to print in the screen the menu to set the hour*/
+	/** VT100 command for text in black and background in black*/
+	UART_putString(UART_0,"\033[0;37;40m");
+	/*VT100 command for clearing the screen*/
+	UART_putString(UART_0, "\033[2J");
+	/** VT100 command for text in red and background in green*/
+	UART_putString(UART_0, "\033[0;37;40m");
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[10;10H");
+	/** Set the text in a string*/
+	UART_putString(UART_0, "Write in format HH/MM/SS\r");
+}
+
+void get_hour()
 {
 	/** VT100 command for text in black and background in black*/
 	UART_putString(UART_0,"\033[0;37;40m");
@@ -79,12 +94,37 @@ void get_hour(void)
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
 }
-/********************************************************************************************************/
-/********************************************************************************************************/
-/********************************************************************************************************/
-void show_set_hour()
+
+void refresh_hour()
 {
-	/*Funct to print in the screen the menu to set the hour*/
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[11;10H");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_hour());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_decena());
+	UART_putChar(UART_0, get_unidad());
+	/*Prints : for the format*/
+	UART_putString(UART_0, ":");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_min());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_decena());
+	UART_putChar(UART_0, get_unidad());
+	/*Prints : for the format*/
+	UART_putString(UART_0, ":");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_sec());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_decena());
+	UART_putChar(UART_0, get_unidad());
+}
+/********************************************************************************************************/
+/********************************************************************************************************/
+/********************************************************************************************************/
+void show_set_date(void)
+{
+	/*Funct to print in the screen the menu to set the date*/
 	/** VT100 command for text in black and background in black*/
 	UART_putString(UART_0,"\033[0;37;40m");
 	/*VT100 command for clearing the screen*/
@@ -94,11 +134,9 @@ void show_set_hour()
 	/** VT100 command for positioning the cursor in x and y position*/
 	UART_putString(UART_0, "\033[10;10H");
 	/** Set the text in a string*/
-	UART_putString(UART_0, "Write in format HH/MM/SS\r");
+	UART_putString(UART_0, "Write in format DD/MM/YY\r");
 }
-/********************************************************************************************************/
-/********************************************************************************************************/
-/********************************************************************************************************/
+
 void get_date(void)
 {
 	/** VT100 command for text in black and background in black*/
@@ -111,6 +149,8 @@ void get_date(void)
 	UART_putString(UART_0, "\033[10;10H");
 	/** Set the text in a string*/
 	UART_putString(UART_0, "Date:\r");
+	/** VT100 command for positioning the cursor in x and y position*/
+	UART_putString(UART_0, "\033[11;10H");
 	/** Gets the value in the register of time, corresponding to Hrs*/
 	valueCapture(RTC_get_date());
 	/** Print the value of the register once it got deco*/
@@ -131,22 +171,30 @@ void get_date(void)
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
 }
-/********************************************************************************************************/
-/********************************************************************************************************/
-/********************************************************************************************************/
-void show_set_date(void)
+
+void refresh_date()
 {
-	/*Funct to print in the screen the menu to set the date*/
-	/** VT100 command for text in black and background in black*/
-	UART_putString(UART_0,"\033[0;37;40m");
-	/*VT100 command for clearing the screen*/
-	UART_putString(UART_0, "\033[2J");
-	/** VT100 command for text in red and background in green*/
-	UART_putString(UART_0, "\033[0;37;40m");
 	/** VT100 command for positioning the cursor in x and y position*/
-	UART_putString(UART_0, "\033[10;10H");
-	/** Set the text in a string*/
-	UART_putString(UART_0, "Write in format DD/MM/YY\r");
+	UART_putString(UART_0, "\033[11;10H");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_date());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_unidad());
+	UART_putChar(UART_0, get_decena());
+	/*Prints : for the format*/
+	UART_putString(UART_0, "/");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_month());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_unidad());
+	UART_putChar(UART_0, get_decena());
+	/*Prints : for the format*/
+	UART_putString(UART_0, "/");
+	/** Gets the value in the register of time, corresponding to Hrs*/
+	valueCapture(RTC_get_year());
+	/** Print the value of the register once it got deco*/
+	UART_putChar(UART_0, get_unidad());
+	UART_putChar(UART_0, get_decena());
 }
 /********************************************************************************************************/
 /********************************************************************************************************/

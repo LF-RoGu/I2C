@@ -11,5 +11,8 @@ void (*fptr_State[3])() =
 {
 	show_menu,
 	show_set_hour,
-	show_set_date
+	show_set_date,
+	get_hour,
+	get_date,
+	write_mem
 };

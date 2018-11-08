@@ -28,6 +28,14 @@
 #define MONTH_ADDR 0x05
 #define YEAR_ADDR 0x06
 
+#define ST 1
+#define STNEG 0
+
+#define SHIFT 4
+#define SHIFT7 7
+
+#define TEN 10
+#define HEX_MASK 0x0F
 
 #define RTC_DELAY 1000
 

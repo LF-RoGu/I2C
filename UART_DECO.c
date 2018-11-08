@@ -7,50 +7,50 @@
 
 #include "UART_DECO.h"
 
-static uint8 temp0,	/*Unidad*/
-			 temp1,	/*Decena*/
-			 temp2,	/*Centena*/
-			 temp3,	/*Millar*/
-			 temp4; /*Decena Millar*/
+static uint8 temp0 = FALSE,	/*Unidad*/
+			 temp1 = FALSE,	/*Decena*/
+			 temp2 = FALSE,	/*Centena*/
+			 temp3 = FALSE,	/*Millar*/
+			 temp4 = FALSE; /*Decena Millar*/
 
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
 /*SECTION TO DECO THE VALUE OBTAINED FROM THE MEMORY*/
 
-void valueCapture(uint32 value)
+void value_capture(uint32 value)
 {
-	uint8 tempValue1 = value / DECENA_MILLAR;
-	uint8 tempValue2 = value / MILLAR;
-	uint8 tempValue3 = value / CENTENA;
-	uint8 tempValue4 = value / DECENA;
+	uint8 tempValue4 = value / DECENA_MILLAR;
+	uint8 tempValue3 = value / MILLAR;
+	uint8 tempValue2 = value / CENTENA;
+	uint8 tempValue1 = value / DECENA;
 
 	/*Decena del Millar*/
-	if (FALSE != tempValue1)
-		temp1 = tempValue1;
+	if (FALSE != tempValue4)
+		temp4 = tempValue4;
 	else
-		temp1 = 0;
+		temp4 = 0;
 	/*Millar*/
-	if (FALSE != tempValue2) {
-		value = value - (DECENA_MILLAR * temp1);
-		temp2 = value / MILLAR;
-	} else
-		temp2 = 0;
-	/*Centena*/
 	if (FALSE != tempValue3) {
-		value = value - (MILLAR * temp2);
-		temp3 = value / CENTENA;
+		value = value - (DECENA_MILLAR * temp4);
+		temp3 = value / MILLAR;
 	} else
 		temp3 = 0;
-	/*Decena*/
-	if (FALSE != tempValue4) {
-		value = value - (CENTENA * temp3);
-		temp4 = value / DECENA;
+	/*Centena*/
+	if (FALSE != tempValue2) {
+		value = value - (MILLAR * temp3);
+		temp2 = value / CENTENA;
 	} else
-		temp4 = 0;
+		temp2 = 0;
+	/*Decena*/
+	if (FALSE != tempValue1) {
+		value = value - (CENTENA * temp2);
+		temp1 = value / DECENA;
+	} else
+		temp1 = 0;
 	/*Unidad*/
 	if (FALSE != value)
-		temp0 = value - (DECENA * temp4);
+		temp0 = value - (DECENA * temp1);
 	else
 		temp0 = 0;
 }
