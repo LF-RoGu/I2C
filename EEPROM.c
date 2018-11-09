@@ -28,7 +28,7 @@ void EEPROM_write_mem(uint16 address,uint8 data)
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
 	/*delay*/
-	EEPROM_delay(1000);
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Register address*/
 	I2C_write_byte(Haddr); /*Address = data*/
@@ -37,7 +37,7 @@ void EEPROM_write_mem(uint16 address,uint8 data)
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
 	/*delay*/
-	EEPROM_delay(1000);
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Register address*/
 	I2C_write_byte(Laddr); /*Address = data*/
@@ -46,7 +46,7 @@ void EEPROM_write_mem(uint16 address,uint8 data)
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
 	/*delay*/
-	EEPROM_delay(1000);
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Register address*/
 	I2C_write_byte(data); /*Address = data*/
@@ -55,7 +55,66 @@ void EEPROM_write_mem(uint16 address,uint8 data)
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
 	/*delay*/
-	EEPROM_delay(1000);
+	EEPROM_delay(EEPROM_DELAY);
+
+	/*Send the stop signal*/
+	I2C_stop();
+}
+
+void EEPROM_write_string_mem(uint16 address,uint8* ptr_data)
+{
+	/*Need to separate address to High and Low address*/
+	/*high address*/
+	uint8 Haddr = address >> BIT8;
+	/*low address*/
+	uint8 Laddr = address;
+
+	/*variable used for the writing*/
+	uint8 byte_control = FALSE;
+
+	/*Set as Tx*/
+	I2C_tx_rx_mode(I2C_TX);
+	/*Start bit*/
+	I2C_start();
+	/*Send the RTC Address to the register*/
+	I2C_write_byte(EEPROM_WRITE_CONTROL); /*1010/Direccion fisica(A2/A1/A0)*/
+	/*Check if I2C is busy*/
+	I2C_wait();
+	/*Recevie the Acknowledge*/
+	I2C_get_ack();
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
+
+	/*Register address*/
+	I2C_write_byte(Haddr); /*Address = data*/
+	/*Check if I2C is busy*/
+	I2C_wait();
+	/*Recevie the Acknowledge*/
+	I2C_get_ack();
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
+
+	/*Register address*/
+	I2C_write_byte(Laddr); /*Address = data*/
+	/*Check if I2C is busy*/
+	I2C_wait();
+	/*Recevie the Acknowledge*/
+	I2C_get_ack();
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
+
+	/*Set a continues data write*/
+	for(byte_control = FALSE; byte_control < PAGE_SIZE; byte_control++)
+	{
+		/*Register address*/
+		I2C_write_byte(data); /*Address = data*/
+		/*Check if I2C is busy*/
+		I2C_wait();
+		/*Recevie the Acknowledge*/
+		I2C_get_ack();
+		/*delay*/
+		EEPROM_delay(EEPROM_DELAY);
+	}
 
 	/*Send the stop signal*/
 	I2C_stop();
@@ -69,7 +128,7 @@ uint8 EEPROM_read_mem(uint16 address)
 	/*low address*/
 	uint8 Laddr = address;
 
-	/*Chance I2C module to Tx mode*/
+	/*Change I2C module to Tx mode*/
 	I2C_tx_rx_mode(I2C_TX);
 	/*Start bit*/
 	I2C_start();
@@ -79,6 +138,8 @@ uint8 EEPROM_read_mem(uint16 address)
 	I2C_wait();
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Register address*/
 	I2C_write_byte(Haddr); /*Address = data*/
@@ -86,7 +147,8 @@ uint8 EEPROM_read_mem(uint16 address)
 	I2C_wait();
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
-	/*imagino un delay aqui tambien*/
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Register address*/
 	I2C_write_byte(Laddr); /*Address = data*/
@@ -94,7 +156,8 @@ uint8 EEPROM_read_mem(uint16 address)
 	I2C_wait();
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
-
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Send the start bit signal again so we can send now the data to read*/
 	I2C_repeted_start();
@@ -105,17 +168,20 @@ uint8 EEPROM_read_mem(uint16 address)
 	I2C_wait();
 	/*Recevie the Acknowledge*/
 	I2C_get_ack();
-	/*imagino un delay aqui tambien*/
 	/*delay*/
-	EEPROM_delay(1500);
+	EEPROM_delay(EEPROM_DELAY);
 
-	/*Generate ~Acknowledge*/
-	I2C_nack();
+	/*Change I2C module to Rx mode*/
+	I2C_tx_rx_mode(I2C_RX);
+
 	/*data get the value that's in the I2C_D register*/
 	data = I2C_read_byte();
 	/*Check if I2C is busy*/
 	I2C_wait();
-	/*imagino un delay aqui tambien*/
+	/*Generate ~Acknowledge*/
+	I2C_nack();
+	/*delay*/
+	EEPROM_delay(EEPROM_DELAY);
 
 	/*Send the stop signal*/
 	I2C_stop();
