@@ -212,3 +212,21 @@ void write_mem()
 	/** Set the text in a string*/
 	UART_putString(UART_0, "Write text to storage\r");
 }
+void read_mem()
+{
+	/** VT100 command for text in black and background in black*/
+		UART_putString(UART_0, "\033[0;37;40m");
+		/*VT100 command for clearing the screen*/
+		UART_putString(UART_0, "\033[2J");
+		/** VT100 command for text in black and background in black*/
+		UART_putString(UART_0, "\033[0;37;40m");
+		/** VT100 command for positioning the cursor in x and y position*/
+		UART_putString(UART_0, "\033[10;10H");
+		/** Set the text in a string*/
+		UART_putString(UART_0, "Message:\r");
+		/** VT100 command for positioning the cursor in x and y position*/
+		UART_putString(UART_0, "\033[11;10H");
+		/*Text*/
+		UART_putString(UART_0, EEPROM_read_string_mem(0x0000));
+}
+void refresh_mem();

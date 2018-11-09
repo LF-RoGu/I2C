@@ -12,6 +12,7 @@
 #include "Delay.h"
 #include "UART_DECO.h"
 #include "UART_TERM.h"
+#include "EEPROM.h"
 #include <stdio.h>
 
 
@@ -39,18 +40,11 @@ int main(void)
 	/**Enables the UART 0 interrupt in the NVIC*/
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_10);
 
-	RTC_set_min(06);
-	RTC_set_hour(23);
-
-	RTC_enable();
-
-	get_hour();
 
 	/**Enables interrupts*/
 	EnableInterrupts;
 
 	for (;;) {
-		refresh_hour();
 	}
 	
 	return 0;
