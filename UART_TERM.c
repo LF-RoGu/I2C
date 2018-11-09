@@ -7,7 +7,7 @@
 
 #include "UART_TERM.h"
 
-void show_menu()
+void TERA_menu()
 {
 	/**The following sentences send strings to PC using the UART_putString function. Also, the string
 	 * is coded with terminal code*/
@@ -75,21 +75,21 @@ void get_hour()
 	/** VT100 command for positioning the cursor in x and y position*/
 	UART_putString(UART_0, "\033[11;10H");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_hour());
+	value_capture(RTC_get_hour());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0,get_decena());
 	UART_putChar(UART_0,get_unidad());
 	/*Prints : for the format*/
 	UART_putString(UART_0, ":");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_min());
+	value_capture(RTC_get_min());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
 	/*Prints : for the format*/
 	UART_putString(UART_0, ":");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_sec());
+	value_capture(RTC_get_sec());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
@@ -100,21 +100,21 @@ void refresh_hour()
 	/** VT100 command for positioning the cursor in x and y position*/
 	UART_putString(UART_0, "\033[11;10H");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_hour());
+	value_capture(RTC_get_hour());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
 	/*Prints : for the format*/
 	UART_putString(UART_0, ":");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_min());
+	value_capture(RTC_get_min());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
 	/*Prints : for the format*/
 	UART_putString(UART_0, ":");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_sec());
+	value_capture(RTC_get_sec());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
@@ -152,21 +152,21 @@ void get_date(void)
 	/** VT100 command for positioning the cursor in x and y position*/
 	UART_putString(UART_0, "\033[11;10H");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_date());
+	value_capture(RTC_get_date());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
 	/*Prints : for the format*/
 	UART_putString(UART_0, "/");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_month());
+	value_capture(RTC_get_month());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
 	/*Prints : for the format*/
 	UART_putString(UART_0, "/");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_year());
+	value_capture(RTC_get_year());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
@@ -177,21 +177,21 @@ void refresh_date()
 	/** VT100 command for positioning the cursor in x and y position*/
 	UART_putString(UART_0, "\033[11;10H");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_date());
+	value_capture(RTC_get_date());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
 	/*Prints : for the format*/
 	UART_putString(UART_0, "/");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_month());
+	value_capture(RTC_get_month());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
 	/*Prints : for the format*/
 	UART_putString(UART_0, "/");
 	/** Gets the value in the register of time, corresponding to Hrs*/
-	valueCapture(RTC_get_year());
+	value_capture(RTC_get_year());
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());

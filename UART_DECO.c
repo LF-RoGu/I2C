@@ -61,17 +61,5 @@ uint8 get_unidad()
 }
 uint8 get_decena()
 {
-	return (temp4 + ASCII_CONV);
-}
-uint8 get_centena()
-{
-	return (temp3 + ASCII_CONV);
-}
-uint8 get_millar()
-{
-	return (temp2 + ASCII_CONV);
-}
-uint8 get_decenaMillar()
-{
 	return (temp1 + ASCII_CONV);
 }
