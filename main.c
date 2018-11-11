@@ -18,11 +18,15 @@
 
 #define SYSTEM_CLOCK 21000000
 
+#define ADDRESS_STRING 0x00FF
+#define ADDRESS_CHAR 0x0000
+
 /**This is mail box to received the information from the serial port*/
 extern UART_MailBoxType UART0_MailBox;
 
 int main(void)
 {
+	sint8 word[] = {"Hello World"};
 	/**Enables the clock of PortB in order to configures TX and RX of UART peripheral*/
 	SIM->SCGC5 = SIM_SCGC5_PORTB_MASK;
 
@@ -41,10 +45,18 @@ int main(void)
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_10);
 
 
+	EEPROM_write_mem(ADDRESS_CHAR,'b');
+	EEPROM_read_mem(ADDRESS_CHAR);
+
+	UART_putChar(UART_0,EEPROM_read_mem(ADDRESS_CHAR));
+
+	EEPROM_write_string_mem(ADDRESS_STRING,word);
+	EEPROM_read_string_mem(ADDRESS_STRING);
 	/**Enables interrupts*/
 	EnableInterrupts;
 
 	for (;;) {
+		refresh_mem(ADDRESS_STRING);
 	}
 	
 	return 0;
