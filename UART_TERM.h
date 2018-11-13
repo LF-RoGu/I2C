@@ -12,6 +12,7 @@
 #include "UART.h"
 #include "UART_DECO.h"
 #include "RTC.h"
+#include "EEPROM.h"
 
 typedef enum
 {
@@ -106,9 +107,18 @@ void write_mem(void);
 /********************************************************************************************/
 /*!
  	 \brief	 Funct used to read the memory
- 	 \param[in] void
- 	 \return void
+ 	 \param[in] address
+ 	 \return char
  */
-void read_mem(void);
+void read_mem(uint16 address);
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Funct used to read string in the memory
+ 	 \param[in] address
+ 	 \return text
+ */
+void refresh_mem(uint16 address);
 
 #endif /* UART_TERM_H_ */

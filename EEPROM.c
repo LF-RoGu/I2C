@@ -106,10 +106,8 @@ void EEPROM_write_string_mem(uint16 address,sint8* ptr_data)
 	/*Set a continues data write*/
 	for(byte_control = FALSE; byte_control < PAGE_SIZE; byte_control++)
 	{
-		if(NULL == ptr_data[byte_control])
-			byte_control = PAGE_SIZE;
 		/*Register address*/
-		I2C_write_byte(*ptr_data); /*Address = data*/
+		I2C_write_byte(*ptr_data); /*Send to the register the value stored*/
 		/*Check if I2C is busy*/
 		I2C_wait();
 		/*Recevie the Acknowledge*/
@@ -118,6 +116,8 @@ void EEPROM_write_string_mem(uint16 address,sint8* ptr_data)
 		EEPROM_delay(EEPROM_DELAY);
 		/*Increment ptr*/
 		ptr_data++;
+		if(NULL == ptr_data[byte_control])
+			byte_control = PAGE_SIZE;
 	}
 
 	/*Send the stop signal*/
@@ -126,7 +126,7 @@ void EEPROM_write_string_mem(uint16 address,sint8* ptr_data)
 
 sint8 EEPROM_read_mem(uint16 address)
 {
-	uint8 data;
+	sint8 data;
 	/*Need to separate address to High and Low address*/
 	/*high address*/
 	uint8 Haddr = address >> BIT8;

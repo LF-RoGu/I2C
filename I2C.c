@@ -97,12 +97,12 @@ uint8_t I2C_busy()
 }
 void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 {
-	if(TRUE == mst_or_slv)
+	if(I2C_MST == mst_or_slv)
 	{
 		/*Master mode*/
 		I2C0->C1 |= I2C_C1_MST_MASK;
 	}
-	else
+	if(I2C_SLV == mst_or_slv)
 	{
 		/*Slave mode*/
 		I2C0->C1 &= ~(I2C_C1_MST_MASK);
@@ -110,13 +110,13 @@ void I2C_mst_or_slv_mode(uint8_t mst_or_slv)
 }
 void I2C_tx_rx_mode(uint8_t tx_or_rx)
 {
-	if(FALSE == tx_or_rx)
+	if(I2C_RX == tx_or_rx)
 	{
 		/*Recieve mode*/
 		I2C0->C1 &= ~I2C_C1_TX_MASK;
 		I2C0->C1 &= ~I2C_C1_TXAK_MASK;
 	}
-	else
+	if(I2C_TX == tx_or_rx)
 	{
 		/*Transmit mode*/
 		I2C0->C1 |= I2C_C1_TX_MASK;

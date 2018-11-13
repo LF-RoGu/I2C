@@ -16,6 +16,9 @@
 #define MILLAR 1000
 #define DECENA_MILLAR 10000
 
+#define LOW_LIMIT 0
+#define HIGH_LIMIT 8
+
 #define ASCII_CONV 48
 
 typedef enum {
@@ -35,12 +38,12 @@ typedef enum {
 
 typedef enum {
 	MENU,
-	SETHOUR,
-	SETDATE,
-	READHOUR,
-	READDATE,
-	WRITEMEM,
-	SHOWMEM,
+	SET_HOUR,
+	SET_DATE,
+	READ_HOUR,
+	READ_DATE,
+	WRITE_MEM,
+	SHOW_MEM,
 	RETURN
 }Time_type;
 
