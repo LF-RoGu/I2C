@@ -10,6 +10,7 @@
 
 #include "Bits.h"
 #include "MK64F12.h"
+#include "UART_TERM.h"
 
 #define DECENA 10
 #define CENTENA 100
@@ -17,6 +18,10 @@
 #define DECENA_MILLAR 10000
 
 #define ASCII_CONV 48
+
+#define LOW_LIMIT 0
+#define HIGH_LIMIT 8
+#define PTR_SIZE 8
 
 typedef enum {
 	ASCII_NUMBER_0 = 48,
@@ -35,12 +40,12 @@ typedef enum {
 
 typedef enum {
 	MENU,
-	SETHOUR,
-	SETDATE,
-	READHOUR,
-	READDATE,
-	WRITEMEM,
-	SHOWMEM,
+	SET_HOUR,
+	SET_DATE,
+	READ_HOUR,
+	READ_DATE,
+	WRITE_MEM,
+	SHOW_MEM,
 	RETURN
 }Time_type;
 
