@@ -7,6 +7,9 @@
 
 #include "UART_TERM.h"
 
+static uint8 data[SIZE];
+static uint8 position = FALSE;
+
 void TERA_menu()
 {
 	/**The following sentences send strings to PC using the UART_putString function. Also, the string
@@ -119,6 +122,34 @@ void refresh_hour()
 	UART_putChar(UART_0, get_decena());
 	UART_putChar(UART_0, get_unidad());
 }
+
+void change_hour()
+{
+	if((ASCII_NUMBER_0 <= get_key()) && (ASCII_NUMBER_9 >= get_key()))
+	{
+		/*Store the hour that the user type in*/
+		data[position] = get_key();
+		/*Move in the buffer*/
+		position++;
+		if(SIZE < position)
+		{
+			RTC_set_hour((data[BIT0]*TEN)+data[BIT1]);
+			RTC_set_min((data[BIT2]*TEN)+data[BIT3]);
+			/*Reset the index*/
+			position = FALSE;
+			/*Set return state, so we can return to the menu*/
+			fptr_function(RETURN);
+			/** VT100 command for positioning the cursor in x and y position*/
+			UART_putString(UART_0, "\033[20;10H");
+			/** Set the text in a string*/
+			UART_putString(UART_0, "Time has been changed\r");
+			/** VT100 command for positioning the cursor in x and y position*/
+			UART_putString(UART_0, "\033[21;10H");
+			/** Set the text in a string*/
+			UART_putString(UART_0, "Press any key to continue...\r");
+		}
+	}
+}
 /********************************************************************************************************/
 /********************************************************************************************************/
 /********************************************************************************************************/
@@ -195,6 +226,34 @@ void refresh_date()
 	/** Print the value of the register once it got deco*/
 	UART_putChar(UART_0, get_unidad());
 	UART_putChar(UART_0, get_decena());
+}
+void change_date()
+{
+	if((ASCII_NUMBER_0 <= get_key()) && (ASCII_NUMBER_9 >= get_key()))
+	{
+		/*Store the hour that the user type in*/
+		data[position] = get_key();
+		/*Move in the buffer*/
+		position++;
+		if(SIZE < position)
+		{
+			RTC_set_year((data[BIT0]*TEN)+data[BIT1]);
+			RTC_set_month((data[BIT2]*TEN)+data[BIT3]);
+			RTC_set_date((data[BIT4]*TEN)+data[BIT5]);
+			/*Reset the index*/
+			position = FALSE;
+			/*Set return state, so we can return to the menu*/
+			fptr_function(RETURN);
+			/** VT100 command for positioning the cursor in x and y position*/
+			UART_putString(UART_0, "\033[20;10H");
+			/** Set the text in a string*/
+			UART_putString(UART_0, "Date has been changed\r");
+			/** VT100 command for positioning the cursor in x and y position*/
+			UART_putString(UART_0, "\033[21;10H");
+			/** Set the text in a string*/
+			UART_putString(UART_0, "Press any key to continue...\r");
+		}
+	}
 }
 /********************************************************************************************************/
 /********************************************************************************************************/
