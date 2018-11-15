@@ -8,7 +8,6 @@
 #ifndef BITS_H_
 #define BITS_H_
 
-#define NULL 0x00
 
 /*! This definition is as a general definitions to bits in regiter or pins in the microcontroller.*/
 typedef enum {BIT0,  /*!< Bit 0 */

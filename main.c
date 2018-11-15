@@ -12,14 +12,10 @@
 #include "Delay.h"
 #include "UART_DECO.h"
 #include "UART_TERM.h"
-#include "EEPROM.h"
-#include "PIT.h"
-#include "Bits.h"
 #include <stdio.h>
 
 
 #define SYSTEM_CLOCK 21000000
-#define DELAY_PIT 2
 
 /**This is mail box to received the information from the serial port*/
 extern UART_MailBoxType UART0_MailBox;
@@ -43,31 +39,18 @@ int main(void)
 	/**Enables the UART 0 interrupt in the NVIC*/
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_10);
 
+	RTC_set_min(06);
+	RTC_set_hour(23);
+
 	RTC_enable();
 
-	PIT_clock_gating();
-	PIT_enable();
-	NVIC_enableInterruptAndPriotity(PIT_CH0_IRQ, PRIORITY_10);
-
-	fptr_function(MENU);
-
-	PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY_PIT);
+	get_hour();
 
 	/**Enables interrupts*/
 	EnableInterrupts;
 
 	for (;;) {
-		if(TRUE == PIT0_get_interrupt_status())
-		{
-			if(READ_HOUR == get_past_state())
-			{
-				refresh_hour();
-			}
-			if(READ_DATE == get_past_state())
-			{
-				refresh_date();
-			}
-		}
+		refresh_hour();
 	}
 	
 	return 0;
