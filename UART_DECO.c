@@ -98,7 +98,7 @@ void set_state()
 	uint8 n_message;
 	uint16 addres_aux = ADDRESS_INIT;
 	uint8 buffer_cont = FALSE;
-	uint8 txt_cont = FALSE;
+	uint8 txt_cont = BIT1;
 	uint8 enter_cont = FALSE;
 	if (UART0_MailBox.flag)
 	{
@@ -343,162 +343,324 @@ void set_state()
 								{
 									set_key(UART0_MailBox.mailBox);
 									UART_putChar(UART_0, UART0_MailBox.mailBox);
+									buffer_text[buffer_cont] = UART0_MailBox.mailBox;
+									buffer_cont++;
+									if(buffer_cont == TXT_SIZE)
+									{
+										set_key(ASCII_ENTER);
+									}
 									if((ASCII_ENTER == get_key()))
 									{
 										enter_cont++;
 										state_flag = FALSE;
 										enter_flag = FALSE;
 										esc_flag = TRUE;
+										buffer_cont = BIT1;
+										for(addres_aux = FALSE;addres_aux < TXT_SIZE;addres_aux++)
+										{
+											/*Send data stored in the buffer to the memory via I2C*/
+											EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+											/*Clear the buffer*/
+											buffer_text[buffer_cont] = FALSE;
+											/*Increase buffer*/
+											buffer_cont++;
+										}
 									}
-									buffer[buffer_cont] = UART0_MailBox.mailBox;
-									buffer_cont++;
 								}
 								UART0_MailBox.flag = FALSE;
-							}
-							for(addres_aux = FALSE;addres_aux<=buffer_cont;addres_aux++)
-							{
-								/*Send data stored in the buffer to the memory via I2C*/
-								EEPROM_write_mem(addres_aux, buffer[addres_aux]);
-								/*Clear the buffer*/
-								buffer[addres_aux] = FALSE;
 							}
 							break;
 						case MASSAGE_2:
 							write_mem();
+							/** VT100 command for positioning the cursor in x and y position*/
+							UART_putString(UART_0, "\033[12;10H");
 							while(enter_cont < 2)
 							{
 								if (UART0_MailBox.flag)
 								{
 									set_key(UART0_MailBox.mailBox);
+									UART_putChar(UART_0, UART0_MailBox.mailBox);
+									buffer_text[buffer_cont] = UART0_MailBox.mailBox;
+									buffer_cont++;
+									if(buffer_cont == BIT2*TXT_SIZE)
+									{
+										set_key(ASCII_ENTER);
+									}
 									if((ASCII_ENTER == get_key()))
 									{
-										if (enter_cont == 1) {
+										enter_cont++;
+										buffer_cont = BIT1;
+										if (enter_cont == 1)
+										{
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[14;10H");
+											for (addres_aux = BIT1; addres_aux < TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 2) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[15;10H");
+											state_flag = FALSE;
+											enter_flag = FALSE;
+											esc_flag = TRUE;
+											for (addres_aux = TXT_SIZE; addres_aux < BIT2*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
-										enter_cont++;
-										state_flag = FALSE;
-										enter_flag = FALSE;
-										esc_flag = TRUE;
 									}
-									UART_putChar(UART_0, UART0_MailBox.mailBox);
-									EEPROM_write_mem(addres_aux, UART0_MailBox.mailBox);
-									addres_aux++;
 								}
 								UART0_MailBox.flag = FALSE;
 							}
 							break;
 						case MASSAGE_3:
+							write_mem();
+							/** VT100 command for positioning the cursor in x and y position*/
+							UART_putString(UART_0, "\033[12;10H");
 							while(enter_cont < 3)
 							{
-								write_mem();
 								if (UART0_MailBox.flag)
 								{
 									set_key(UART0_MailBox.mailBox);
+									UART_putChar(UART_0, UART0_MailBox.mailBox);
+									buffer_text[buffer_cont] = UART0_MailBox.mailBox;
+									buffer_cont++;
+									if(buffer_cont == TXT_SIZE)
+									{
+										set_key(ASCII_ENTER);
+									}
 									if((ASCII_ENTER == get_key()))
 									{
+										enter_cont++;
+										buffer_cont = BIT1;
 										if (enter_cont == 1) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[14;10H");
+											for (addres_aux = BIT1; addres_aux < TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 2) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[15;10H");
+											for (addres_aux = BIT2*TXT_SIZE; addres_aux < BIT3*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 3) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[16;10H");
+											state_flag = FALSE;
+											enter_flag = FALSE;
+											esc_flag = TRUE;
+											for (addres_aux = BIT3*TXT_SIZE; addres_aux < BIT4*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
-										enter_cont++;
-										state_flag = FALSE;
-										enter_flag = FALSE;
-										esc_flag = TRUE;
 									}
-									UART_putChar(UART_0, UART0_MailBox.mailBox);
-									EEPROM_write_mem(addres_aux, UART0_MailBox.mailBox);
-									addres_aux++;
 								}
 								UART0_MailBox.flag = FALSE;
 							}
 							break;
 						case MASSAGE_4:
+							write_mem();
+							/** VT100 command for positioning the cursor in x and y position*/
+							UART_putString(UART_0, "\033[12;10H");
 							while(enter_cont < 4)
 							{
-								write_mem();
 								if (UART0_MailBox.flag)
 								{
 									set_key(UART0_MailBox.mailBox);
+									UART_putChar(UART_0, UART0_MailBox.mailBox);
+									buffer_text[buffer_cont] = UART0_MailBox.mailBox;
+									buffer_cont++;
+									if(buffer_cont == TXT_SIZE)
+									{
+										set_key(ASCII_ENTER);
+									}
 									if((ASCII_ENTER == get_key()))
 									{
+										enter_cont++;
+										buffer_cont = BIT1;
 										if (enter_cont == 1) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[14;10H");
+											for (addres_aux = BIT1; addres_aux < TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 2) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[15;10H");
+											for (addres_aux = BIT2*TXT_SIZE; addres_aux < BIT3*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 3) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[16;10H");
+											for (addres_aux = BIT3*TXT_SIZE; addres_aux < BIT4*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 4) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[17;10H");
+											state_flag = FALSE;
+											enter_flag = FALSE;
+											esc_flag = TRUE;
+											for (addres_aux = BIT4*TXT_SIZE; addres_aux < BIT5*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
-										enter_cont++;
-										state_flag = FALSE;
-										enter_flag = FALSE;
-										esc_flag = TRUE;
 									}
-									UART_putChar(UART_0, UART0_MailBox.mailBox);
-									EEPROM_write_mem(addres_aux, UART0_MailBox.mailBox);
-									addres_aux++;
 								}
 								UART0_MailBox.flag = FALSE;
 							}
 							break;
 						case MASSAGE_5:
+							write_mem();
+							/** VT100 command for positioning the cursor in x and y position*/
+							UART_putString(UART_0, "\033[12;10H");
 							while(enter_cont < 5)
 							{
-								write_mem();
 								if (UART0_MailBox.flag)
 								{
 									set_key(UART0_MailBox.mailBox);
+									UART_putChar(UART_0, UART0_MailBox.mailBox);
+									buffer_text[buffer_cont] = UART0_MailBox.mailBox;
+									buffer_cont++;
+									if(buffer_cont == TXT_SIZE)
+									{
+										set_key(ASCII_ENTER);
+									}
 									if((ASCII_ENTER == get_key()))
 									{
+										enter_cont++;
+										buffer_cont = BIT1;
 										if (enter_cont == 1) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[14;10H");
+											for (addres_aux = BIT1; addres_aux < TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 2) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[15;10H");
+											for (addres_aux = BIT2*TXT_SIZE; addres_aux < BIT3*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 3) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[16;10H");
+											for (addres_aux = BIT3*TXT_SIZE; addres_aux < BIT4*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 4) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[17;10H");
+											for (addres_aux = BIT4*TXT_SIZE; addres_aux < BIT5*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
 										if (enter_cont == 5) {
 											/** VT100 command for positioning the cursor in x and y position*/
 											UART_putString(UART_0, "\033[18;10H");
+											state_flag = FALSE;
+											enter_flag = FALSE;
+											esc_flag = TRUE;
+											for (addres_aux = BIT5*TXT_SIZE; addres_aux < BIT6*TXT_SIZE; addres_aux++)
+											{
+												/*Send data stored in the buffer to the memory via I2C*/
+												EEPROM_write_mem(addres_aux, buffer_text[buffer_cont]);
+												/*Clear the buffer*/
+												buffer_text[buffer_cont] = FALSE;
+												/*Increase buffer*/
+												buffer_cont++;
+											}
 										}
-										enter_cont++;
-										state_flag = FALSE;
-										enter_flag = FALSE;
-										esc_flag = TRUE;
 									}
-									UART_putChar(UART_0, UART0_MailBox.mailBox);
-									EEPROM_write_mem(addres_aux, UART0_MailBox.mailBox);
-									addres_aux++;
 								}
 								UART0_MailBox.flag = FALSE;
 							}
@@ -510,14 +672,98 @@ void set_state()
 			}
 			if ((TRUE == get_enter()) && (ASCII_NUMBER_6 == get_key())) {
 				set_key(ASCII_NUMBER_0);
-				show_set_hour();
+				num_mem();
 				enter_flag = FALSE;
+				state_flag = TRUE;
 				UART0_MailBox.flag = FALSE;
-				switch(n_message)
+				while(state_flag)
 				{
-				show_mem();
-				case MASSAGE_1:
-					break;
+					if (UART0_MailBox.flag)
+					{
+						n_message = UART0_MailBox.mailBox;
+						UART_putChar(UART_0, n_message);
+						n_message -= ASCII_CONV;
+						buffer_cont = BIT0;
+						switch(n_message)
+						{
+						case MASSAGE_1:
+							for(addres_aux = BIT1;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								buffer[buffer_cont] = EEPROM_read_mem(addres_aux);
+								buffer_cont++;
+							}
+							break;
+						case MASSAGE_2:
+							for (addres_aux = BIT2*TXT_SIZE; addres_aux < BIT3*TXT_SIZE; addres_aux++)
+							{
+								buffer[buffer_cont] = EEPROM_read_mem(addres_aux);
+								buffer_cont++;
+							}
+							break;
+						case MASSAGE_3:
+							for (addres_aux = BIT3*TXT_SIZE; addres_aux < BIT4*TXT_SIZE; addres_aux++)
+							{
+								buffer[buffer_cont] = EEPROM_read_mem(addres_aux);
+								buffer_cont++;
+							}
+							break;
+						case MASSAGE_4:
+							for (addres_aux = BIT4*TXT_SIZE; addres_aux < BIT5*TXT_SIZE; addres_aux++)
+							{
+								buffer[buffer_cont] = EEPROM_read_mem(addres_aux);
+								buffer_cont++;
+							}
+							break;
+						case MASSAGE_5:
+							for (addres_aux = BIT5*TXT_SIZE; addres_aux < BIT6*TXT_SIZE; addres_aux++)
+							{
+								buffer[buffer_cont] = EEPROM_read_mem(addres_aux);
+								buffer_cont++;
+							}
+							break;
+						}
+					}
+					if((ASCII_ENTER == get_key()))
+					{
+						state_flag = FALSE;
+						enter_flag = FALSE;
+						esc_flag = TRUE;
+						if(n_message == MASSAGE_1)
+						{
+							for(addres_aux = BIT0;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								UART_putChar(UART_0, buffer[addres_aux]);
+							}
+						}
+						if(n_message == MASSAGE_2)
+						{
+							for(addres_aux = BIT0;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								UART_putChar(UART_0, buffer[addres_aux]);
+							}
+						}
+						if(n_message == MASSAGE_3)
+						{
+							for(addres_aux = BIT0;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								UART_putChar(UART_0, buffer[addres_aux]);
+							}
+						}
+						if(n_message == MASSAGE_4)
+						{
+							for(addres_aux = BIT0;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								UART_putChar(UART_0, buffer[addres_aux]);
+							}
+						}
+						if(n_message == MASSAGE_5)
+						{
+							for(addres_aux = BIT0;addres_aux < TXT_SIZE;addres_aux++)
+							{
+								UART_putChar(UART_0, buffer[addres_aux]);
+							}
+						}
+					}
 				}
 			}
 			if ((TRUE == get_esc()) || (FALSE == state_flag)) {
